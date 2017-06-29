@@ -1,5 +1,7 @@
 package club.calabashbrothers.zkadmin.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class User extends BaseEntity {
     private Long id;
 
@@ -51,6 +53,11 @@ public class User extends BaseEntity {
 
     public void setSalt(String salt) {
         this.salt = salt == null ? null : salt.trim();
+    }
+
+    @JsonIgnore
+    public String getCredentialsSalt() {
+        return loginName+salt;
     }
 
 
