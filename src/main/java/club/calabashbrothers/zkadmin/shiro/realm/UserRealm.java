@@ -51,17 +51,10 @@ public class UserRealm extends AuthorizingRealm {
 
 
 
-        User user = null;
-        if(RegexpUtils.isMobilephone(username)){
-            user = userService.findUserByPhone(username);
-        }else {
-            user = userService.findUserByLoginName(username);
-        }
-
+        User user  = userService.findUserByLoginName(username);
         if(user == null) {
             throw new UnknownAccountException();//没找到帐号
         }
-
 
         UsernamePasswordToken hostToken = (UsernamePasswordToken)token;
 

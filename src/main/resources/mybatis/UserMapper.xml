@@ -14,8 +14,14 @@
   <sql id="Base_Column_List" >
     ID, LOGIN_NAME, NICKNAME, PASSWORD, SALT, CREATED_DATE, UPDATED_DATE, OP_USER
   </sql>
-  <select id="listAll" resultMap="BaseResultMap"  >
+  <select id="findUserByLoginName" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
+    <include refid="Base_Column_List" />
+    from USER
+    WHERE LOGIN_NAME = #{loginName,jdbcType=VARCHAR}
+  </select>
+  <select id="listAll" resultMap="BaseResultMap"  >
+    select
     <include refid="Base_Column_List" />
     from USER
   </select>

@@ -22,5 +22,5 @@ public interface UserMapper {
     List<User>  listAll();
 
     User findUserByLoginName(String loginName);
-    
+
 }
