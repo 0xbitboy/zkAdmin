@@ -24,22 +24,6 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         ShiroUser shiroUser = (ShiroUser)principals.getPrimaryPrincipal();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        /*User user = userService.findUserById(shiroUser.getUserId());
-        if(StringUtils.isNotEmpty(user.getRoleIds())){
-            Long [] roleIds = (Long[]) ConvertUtils.convert(user.getRoleIds().split(","),Long.class);
-            authorizationInfo.setRoles(userService.findRoles(roleIds));
-            authorizationInfo.setStringPermissions(userService.findPermissions(roleIds));
-            if(authorizationInfo.getRoles().contains(SysRole.ADMIN)){ //管理员 赋予全部权限
-                authorizationInfo.getStringPermissions().add("*");
-            }
-            if(authorizationInfo.getRoles().contains(SysRole.READONLY)){ //管理员 赋予全部权限
-                authorizationInfo.getStringPermissions().add("*:read");
-                authorizationInfo.getStringPermissions().add("*:view");
-            }
-        }
-        //修改最后登录的时间
-        user.setLastLoginTime(new Date());
-        userService.updateUser(user);*/
         return authorizationInfo;
     }
 
