@@ -10,7 +10,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Created by liaojiacan on 2017/7/1.
  */
-public class ZookeeprFactory {
+public class ZookeeprClientFactory {
 
     String connectString = null;
     int sessionTimeout = 50000;
@@ -19,15 +19,15 @@ public class ZookeeprFactory {
     private String scheme;
     private byte[] auth;
 
-    public ZookeeprFactory(String connectString, int sessionTimeout) {
+    public ZookeeprClientFactory(String connectString, int sessionTimeout) {
         this.connectString = connectString;
         this.sessionTimeout = sessionTimeout;
     }
-    public ZookeeprFactory setEventCallBack(EventCallBack cb){
+    public ZookeeprClientFactory setEventCallBack(EventCallBack cb){
         this.eventCallBackProxy = cb;
         return this;
     }
-    public ZookeeprFactory setAuthInfo(String schema, byte[] auth){
+    public ZookeeprClientFactory setAuthInfo(String schema, byte[] auth){
         this.scheme = schema;
         this.auth = auth;
         return this;
@@ -36,7 +36,7 @@ public class ZookeeprFactory {
     public ZooKeeper createZookeeper() {
         try {
             if (this.zk == null){
-                synchronized (ZookeeprFactory.class){
+                synchronized (ZookeeprClientFactory.class){
                     if (this.zk == null){
                         buildZk();
                     }
