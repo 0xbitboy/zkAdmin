@@ -1,5 +1,7 @@
 package club.calabashbrothers.zkadmin.manager.zookeeper;
 
+import club.calabashbrothers.zkadmin.manager.zookeeper.model.TextNode;
+import club.calabashbrothers.zkadmin.manager.zookeeper.model.ZkNode;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
@@ -7,6 +9,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -56,6 +59,48 @@ public class ZookeeperManager {
             }
             return childs;
         }
-
     }
+
+    /**
+     * 获取完整的目录数
+     * @return
+     */
+    public ZkNode getZkTree(){
+        ZkNode  root = new TextNode("/");
+        loadZkNode(zookeeprClientFactory.createZookeeper(),root);
+        return  root;
+    }
+
+    /**
+     * 递归构建 目录树
+     * @param zooKeeper
+     * @param node 顶级节点
+     */
+    private void loadZkNode(ZooKeeper zooKeeper,ZkNode node){
+        List<String> children=null;
+        boolean acl = false;
+        try {
+            children = zooKeeper.getChildren(node.getPath(), null, null);
+        }catch (KeeperException.NoAuthException noAuthe){
+            acl = true;
+        }catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(acl){
+            node.setAcl(true);
+        }
+        if(children==null){
+            return;
+        }
+        node.setChildren(new LinkedList<ZkNode>());
+        for (String child:children){
+            ZkNode  childNode = new TextNode(child);
+            loadZkNode(zooKeeper,childNode);
+            node.getChildren().add(childNode);
+        }
+    }
+
+
 }
