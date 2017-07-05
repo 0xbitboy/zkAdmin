@@ -7,10 +7,12 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by liaojiacan on 2017/7/2.
@@ -67,7 +69,7 @@ public class ZookeeperManager {
      */
     public ZkNode getZkTree(){
         ZkNode  root = new TextNode("/");
-        loadZkNode(zookeeprClientFactory.createZookeeper(),root);
+        loadZkNodes(zookeeprClientFactory.createZookeeper(),root);
         return  root;
     }
 
@@ -76,7 +78,7 @@ public class ZookeeperManager {
      * @param zooKeeper
      * @param node 顶级节点
      */
-    private void loadZkNode(ZooKeeper zooKeeper,ZkNode node){
+    private void loadZkNodes(ZooKeeper zooKeeper,ZkNode node){
         List<String> children=null;
         boolean acl = false;
         try {
@@ -97,10 +99,87 @@ public class ZookeeperManager {
         node.setChildren(new LinkedList<ZkNode>());
         for (String child:children){
             ZkNode  childNode = new TextNode(child);
-            loadZkNode(zooKeeper,childNode);
+            loadZkNodes(zooKeeper,childNode);
             node.getChildren().add(childNode);
         }
     }
+
+    /**
+     * 保存一个节点
+     * @param zkNode
+     * @return
+     */
+    public boolean save(ZkNode zkNode){
+
+        Object content = zkNode.getContent();
+        if (content == null) content = "";
+        ZooKeeper zk = zookeeprClientFactory.createZookeeper();
+        try {
+            Stat stat = zk.exists(zkNode.getPath(), null);
+            byte[] bytes = zkNode.getBytes();
+            if (stat == null){
+                recursiveCreate(zk, zkNode.getPath(), bytes);
+            }else {
+                zk.setData(zkNode.getPath(),bytes,stat.getVersion());
+            }
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+
+    }
+
+
+    private   void recursiveRemove(ZooKeeper zk,String pPath) throws KeeperException, InterruptedException {
+        List<String> chPaths = zk.getChildren(pPath,false);
+        if (chPaths.size() == 0){
+            zk.delete(pPath,-1);
+            System.out.println(pPath);
+            return;
+        }
+        //delete childs
+        for (String path : chPaths){
+            String recursivePPath = pPath + "/" +path;
+            recursiveRemove(zk,recursivePPath);
+        }
+        //delete self
+        zk.delete(pPath,-1);
+    }
+
+    private void recursiveCreate(ZooKeeper zk,String path,byte[] data) throws KeeperException, InterruptedException {
+        if ("/".equals(path.trim())) return;
+        path = StringUtils.trimTrailingCharacter(path, '/');
+        Stack<String> paths = buildPathStack(path);
+        byte[] tempdata = "".getBytes();
+        while (!paths.empty()) {
+            String elPath = paths.pop();
+            Stat stat = zk.exists(elPath, false);
+            if (paths.isEmpty()) tempdata = data;
+            if (stat == null)zk.create(elPath, tempdata, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        }
+    }
+
+    private Stack<String> buildPathStack(String path){
+        Stack<String> stack = new Stack<String>();
+        stack.push(path);
+        int end = path.lastIndexOf("/");
+        while (end > 0){
+            String elPath = path.substring(0,end);
+            stack.push(elPath);
+            end = elPath.lastIndexOf("/");
+        }
+        return stack;
+    }
+
+
+    public  void close(){
+        zookeeprClientFactory.close();
+    }
+
 
 
 }
