@@ -7,7 +7,6 @@ import club.calabashbrothers.zkadmin.manager.zookeeper.model.ZkNode;
 import club.calabashbrothers.zkadmin.web.Constants;
 import club.calabashbrothers.zkadmin.web.Result;
 import club.calabashbrothers.zkadmin.web.form.ZookeeperConnectForm;
-import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -24,6 +23,13 @@ import java.util.Map;
 @Controller("zookeeper")
 public class CoreController {
 
+    /**
+     * 连接 zookeeper
+     * @param form
+     * @param bindingResult
+     * @param session
+     * @return
+     */
     @RequestMapping("connect.json")
     @ResponseBody
     public Map<String,Object> connect(@Valid ZookeeperConnectForm form, BindingResult bindingResult, HttpSession session){
@@ -46,6 +52,11 @@ public class CoreController {
         }
     }
 
+    /**
+     * 获取 完整的目录树
+     * @param session
+     * @return
+     */
     @RequestMapping("loadPathTree.json")
     @ResponseBody
     public Map<String,Object> loadPathTree( HttpSession session){
@@ -57,6 +68,12 @@ public class CoreController {
         return Result.successWrapper("object",rootNode);
     }
 
+    /**
+     * 创建节点
+     * @param path
+     * @param session
+     * @return
+     */
     @RequestMapping("createPath.json")
     @ResponseBody
     public Map<String,Object> createPath( String path,HttpSession session){
@@ -73,6 +90,13 @@ public class CoreController {
         return Result.SIMPLE_SUCCESS;
     }
 
+    /**
+     * 保存节点内容
+     * @param path
+     * @param content
+     * @param session
+     * @return
+     */
     @RequestMapping("save.json")
     @ResponseBody
     public Map<String,Object> save( String path,String content,HttpSession session){
@@ -91,6 +115,36 @@ public class CoreController {
         return Result.SIMPLE_SUCCESS;
     }
 
+    /**
+     * 读取节点数据
+     * @param path
+     * @param session
+     * @return
+     */
+    @RequestMapping("readPath.json")
+    @ResponseBody
+    public Map<String,Object> readPath( String path,HttpSession session) {
+        ZookeeperManager zkmg = getZookeeperManager(session);
+        if(zkmg == null){
+            return Result.NONE_ZK_CONNECTION;
+        }
+        if(path==null) return  Result.formErrorWrapper("path","path 不能为空！");
+        try {
+            //先处理 是文本的节点，后面再加其他处理器。。。
+            ZkNode zkNode = new TextNode(path);
+            zkmg.loadNode(zkNode);
+            return Result.successWrapper(zkNode);
+        } catch (Exception e) {
+            return Result.errorWrapper(e.getMessage());
+        }
+    }
+
+    /**
+     * 删除节点
+     * @param path
+     * @param session
+     * @return
+     */
     @RequestMapping("deletePath.json")
     @ResponseBody
     public Map<String,Object> deletePath( String path,HttpSession session) {

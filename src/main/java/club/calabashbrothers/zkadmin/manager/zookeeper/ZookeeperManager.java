@@ -133,6 +133,15 @@ public class ZookeeperManager {
 
     }
 
+    public void loadNode(ZkNode zkNode) throws KeeperException, InterruptedException {
+        ZooKeeper zk = zookeeprClientFactory.createZookeeper();
+        Stat stat = zk.exists(zkNode.getPath(), null);
+        if(stat!=null){
+            byte[] data = zk.getData(zkNode.getPath(), null, stat);
+            zkNode.setContent(zkNode.parse(data));
+        }
+    }
+
     public void remove(String path) throws KeeperException, InterruptedException {
         ZooKeeper zk = zookeeprClientFactory.createZookeeper();
         recursiveRemove(zk,path);
