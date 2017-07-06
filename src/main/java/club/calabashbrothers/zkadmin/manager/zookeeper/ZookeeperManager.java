@@ -133,6 +133,11 @@ public class ZookeeperManager {
 
     }
 
+    public void remove(String path) throws KeeperException, InterruptedException {
+        ZooKeeper zk = zookeeprClientFactory.createZookeeper();
+        recursiveRemove(zk,path);
+    }
+
 
     private   void recursiveRemove(ZooKeeper zk,String pPath) throws KeeperException, InterruptedException {
         List<String> chPaths = zk.getChildren(pPath,false);
