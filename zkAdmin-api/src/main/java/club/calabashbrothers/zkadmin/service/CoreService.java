@@ -32,4 +32,10 @@ public interface CoreService {
      * @return
      */
     List<ConnectionInfo> listConnections(String owner);
+
+    /**
+     *
+     * @param id
+     */
+    void removeConnectionInfo(Long id);
 }

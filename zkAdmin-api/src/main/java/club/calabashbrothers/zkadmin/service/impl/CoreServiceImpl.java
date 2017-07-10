@@ -55,4 +55,9 @@ public class CoreServiceImpl implements CoreService {
     public List<ConnectionInfo> listConnections(String owner) {
         return connectionInfoMapper.listConnections(owner);
     }
+
+    @Override
+    public void removeConnectionInfo(Long id) {
+        connectionInfoMapper.deleteByPrimaryKey(id);
+    }
 }
