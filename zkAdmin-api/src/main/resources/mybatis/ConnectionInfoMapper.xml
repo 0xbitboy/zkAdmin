@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="club.calabashbrothers.zkadmin.domain.mapper.ConnectionInfoMapper" >
+  <resultMap id="BaseResultMap" type="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="CONNECT_URL" property="connectUrl" jdbcType="VARCHAR" />
+    <result column="SESSION_TIMEOUT" property="sessionTimeout" jdbcType="INTEGER" />
+    <result column="ACL" property="acl" jdbcType="VARCHAR" />
+    <result column="CREATED_DATE" property="createdDate" jdbcType="TIMESTAMP" />
+    <result column="UPDATED_DATE" property="updatedDate" jdbcType="TIMESTAMP" />
+    <result column="OP_USER" property="opUser" jdbcType="VARCHAR" />
+    <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, CONNECT_URL, SESSION_TIMEOUT, ACL, CREATED_DATE, UPDATED_DATE, OP_USER, REMARK
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from CONNECTION
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from CONNECTION
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
+    insert into CONNECTION (ID, CONNECT_URL, SESSION_TIMEOUT, 
+      ACL, CREATED_DATE, UPDATED_DATE, 
+      OP_USER, REMARK)
+    values (#{id,jdbcType=BIGINT}, #{connectUrl,jdbcType=VARCHAR}, #{sessionTimeout,jdbcType=INTEGER}, 
+      #{acl,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}, #{updatedDate,jdbcType=TIMESTAMP}, 
+      #{opUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
+    insert into CONNECTION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="connectUrl != null" >
+        CONNECT_URL,
+      </if>
+      <if test="sessionTimeout != null" >
+        SESSION_TIMEOUT,
+      </if>
+      <if test="acl != null" >
+        ACL,
+      </if>
+      <if test="createdDate != null" >
+        CREATED_DATE,
+      </if>
+      <if test="updatedDate != null" >
+        UPDATED_DATE,
+      </if>
+      <if test="opUser != null" >
+        OP_USER,
+      </if>
+      <if test="remark != null" >
+        REMARK,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="connectUrl != null" >
+        #{connectUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionTimeout != null" >
+        #{sessionTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="acl != null" >
+        #{acl,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null" >
+        #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedDate != null" >
+        #{updatedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opUser != null" >
+        #{opUser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
+    update CONNECTION
+    <set >
+      <if test="connectUrl != null" >
+        CONNECT_URL = #{connectUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="sessionTimeout != null" >
+        SESSION_TIMEOUT = #{sessionTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="acl != null" >
+        ACL = #{acl,jdbcType=VARCHAR},
+      </if>
+      <if test="createdDate != null" >
+        CREATED_DATE = #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedDate != null" >
+        UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="opUser != null" >
+        OP_USER = #{opUser,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        REMARK = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
+    update CONNECTION
+    set CONNECT_URL = #{connectUrl,jdbcType=VARCHAR},
+      SESSION_TIMEOUT = #{sessionTimeout,jdbcType=INTEGER},
+      ACL = #{acl,jdbcType=VARCHAR},
+      CREATED_DATE = #{createdDate,jdbcType=TIMESTAMP},
+      UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
+      OP_USER = #{opUser,jdbcType=VARCHAR},
+      REMARK = #{remark,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -13,8 +13,6 @@ public class User extends BaseEntity {
 
     private String salt;
 
-
-
     public Long getId() {
         return id;
     }

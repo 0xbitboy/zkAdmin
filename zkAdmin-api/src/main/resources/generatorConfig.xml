@@ -47,7 +47,8 @@
               </javaClientGenerator>
 
               <!--hi 如果你想反相生成 java，请在此处填写，建议初次生成使用。不要覆盖其他entity-->
-              <table tableName="USER"  domainObjectName="User"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
+              <!--<table tableName="USER"  domainObjectName="User"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
+              <table tableName="CONNECTION"  domainObjectName="ConnectionInfo"  enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
        </context>
 </generatorConfiguration>
