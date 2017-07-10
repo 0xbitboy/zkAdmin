@@ -10,30 +10,42 @@
     <result column="UPDATED_DATE" property="updatedDate" jdbcType="TIMESTAMP" />
     <result column="OP_USER" property="opUser" jdbcType="VARCHAR" />
     <result column="REMARK" property="remark" jdbcType="VARCHAR" />
+    <result column="OWNER" property="owner" jdbcType="VARCHAR" />
   </resultMap>
   <sql id="Base_Column_List" >
-    ID, CONNECT_URL, SESSION_TIMEOUT, ACL, CREATED_DATE, UPDATED_DATE, OP_USER, REMARK
+    ID, CONNECT_URL, SESSION_TIMEOUT, ACL, CREATED_DATE, UPDATED_DATE, OP_USER, REMARK, 
+    OWNER
   </sql>
-  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+
+  <select id="listConnections" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
-    from CONNECTION
+    from `CONNECTION`
+    where OWNER = #{owner,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    <include refid="Base_Column_List" />
+    from `CONNECTION`
     where ID = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
-    delete from CONNECTION
+    delete from `CONNECTION`
     where ID = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
-    insert into CONNECTION (ID, CONNECT_URL, SESSION_TIMEOUT, 
+    insert into `CONNECTION` (ID, CONNECT_URL, SESSION_TIMEOUT,
       ACL, CREATED_DATE, UPDATED_DATE, 
-      OP_USER, REMARK)
+      OP_USER, REMARK, OWNER
+      )
     values (#{id,jdbcType=BIGINT}, #{connectUrl,jdbcType=VARCHAR}, #{sessionTimeout,jdbcType=INTEGER}, 
       #{acl,jdbcType=VARCHAR}, #{createdDate,jdbcType=TIMESTAMP}, #{updatedDate,jdbcType=TIMESTAMP}, 
-      #{opUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+      #{opUser,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{owner,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
-    insert into CONNECTION
+    insert into `CONNECTION`
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
         ID,
@@ -58,6 +70,9 @@
       </if>
       <if test="remark != null" >
         REMARK,
+      </if>
+      <if test="owner != null" >
+        OWNER,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -85,10 +100,13 @@
       <if test="remark != null" >
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="owner != null" >
+        #{owner,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
-    update CONNECTION
+    update `CONNECTION`
     <set >
       <if test="connectUrl != null" >
         CONNECT_URL = #{connectUrl,jdbcType=VARCHAR},
@@ -111,18 +129,22 @@
       <if test="remark != null" >
         REMARK = #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="owner != null" >
+        OWNER = #{owner,jdbcType=VARCHAR},
+      </if>
     </set>
     where ID = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo" >
-    update CONNECTION
+    update `CONNECTION`
     set CONNECT_URL = #{connectUrl,jdbcType=VARCHAR},
       SESSION_TIMEOUT = #{sessionTimeout,jdbcType=INTEGER},
       ACL = #{acl,jdbcType=VARCHAR},
       CREATED_DATE = #{createdDate,jdbcType=TIMESTAMP},
       UPDATED_DATE = #{updatedDate,jdbcType=TIMESTAMP},
       OP_USER = #{opUser,jdbcType=VARCHAR},
-      REMARK = #{remark,jdbcType=VARCHAR}
+      REMARK = #{remark,jdbcType=VARCHAR},
+      OWNER = #{owner,jdbcType=VARCHAR}
     where ID = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

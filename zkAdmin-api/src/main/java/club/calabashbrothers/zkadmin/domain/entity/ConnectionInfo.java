@@ -1,8 +1,6 @@
 package club.calabashbrothers.zkadmin.domain.entity;
 
-import java.util.Date;
-
-public class ConnectionInfo extends BaseEntity{
+public class ConnectionInfo extends BaseEntity {
     private Long id;
 
     private String connectUrl;
@@ -12,6 +10,8 @@ public class ConnectionInfo extends BaseEntity{
     private String acl;
 
     private String remark;
+
+    private String owner;
 
     public Long getId() {
         return id;
@@ -51,5 +51,13 @@ public class ConnectionInfo extends BaseEntity{
 
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner == null ? null : owner.trim();
     }
 }
