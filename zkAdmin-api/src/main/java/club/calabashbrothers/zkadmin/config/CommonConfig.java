@@ -33,10 +33,5 @@ public class CommonConfig {
     }
 
 
-    @Bean(name = "javaMailSender" )
-    @Scope(value = "singleton")
-    public JavaMailSenderImpl javaMailSender(){
-        return new JavaMailSenderImpl();
-    }
 
 }
