@@ -1,13 +1,18 @@
 package club.calabashbrothers.zkadmin.controller;
 
+import club.calabashbrothers.zkadmin.domain.entity.ConnectionInfo;
 import club.calabashbrothers.zkadmin.manager.zookeeper.ZookeeperManager;
 import club.calabashbrothers.zkadmin.manager.zookeeper.ZookeeprClientFactory;
 import club.calabashbrothers.zkadmin.manager.zookeeper.model.TextNode;
 import club.calabashbrothers.zkadmin.manager.zookeeper.model.ZkNode;
+import club.calabashbrothers.zkadmin.service.CoreService;
+import club.calabashbrothers.zkadmin.shiro.exception.DataExistException;
+import club.calabashbrothers.zkadmin.shiro.util.ShiroUtils;
 import club.calabashbrothers.zkadmin.web.Constants;
 import club.calabashbrothers.zkadmin.web.Result;
 import club.calabashbrothers.zkadmin.web.form.ZookeeperConnectForm;
 import org.apache.zookeeper.data.Stat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,13 +28,61 @@ import java.util.Map;
 @Controller("zookeeper")
 public class CoreController {
 
+
+    @Autowired
+    private CoreService coreService;
+
     /**
-     * 连接 zookeeper
+     * 保存连接信息
      * @param form
      * @param bindingResult
      * @param session
      * @return
      */
+    @RequestMapping("connection/save.json")
+    @ResponseBody
+    public Map<String,Object> saveConnection(@Valid ZookeeperConnectForm form, BindingResult bindingResult, HttpSession session){
+        if(bindingResult.hasErrors()){
+            return Result.formErrorWrapper(bindingResult.getFieldError().getField(),bindingResult.getFieldError().getDefaultMessage());
+        }
+        ConnectionInfo connInfo = new ConnectionInfo();
+        connInfo.setConnectUrl(form.getConnectString());
+        connInfo.setAcl(form.getAcl());
+        connInfo.setOwner(ShiroUtils.getCurrUser().getLoginName());
+        connInfo.setRemark(form.getRemark()==null?"未命名":form.getRemark());
+        connInfo.setSessionTimeout(form.getSessionTimeout());
+        try {
+            coreService.saveConnection(connInfo);
+        } catch (DataExistException e) {
+            return Result.errorWrapper(e.getMessage());
+        }
+
+        return Result.SIMPLE_SUCCESS;
+    }
+
+    /**
+     * 移除连接信息
+     * @param id
+     * @return
+     */
+    @RequestMapping("connection/remove.json")
+    @ResponseBody
+    public Map<String,Object> removeConnection(Long id){
+        if(id!=null){
+            coreService.removeConnectionInfo(id);
+        }
+        return Result.SIMPLE_SUCCESS;
+    }
+
+
+
+        /**
+         * 连接 zookeeper
+         * @param form
+         * @param bindingResult
+         * @param session
+         * @return
+         */
     @RequestMapping("connect.json")
     @ResponseBody
     public Map<String,Object> connect(@Valid ZookeeperConnectForm form, BindingResult bindingResult, HttpSession session){
@@ -45,6 +98,15 @@ public class CoreController {
         try {
             Stat rootInfo = zookeeperManager.getNodeInfo("/");
             session.setAttribute(Constants.ZOOKEEPER_MANAGER_SESSION_KEY,zookeeperManager);
+            ConnectionInfo connInfo = new ConnectionInfo();
+            connInfo.setConnectUrl(form.getConnectString());
+            connInfo.setAcl(form.getAcl());
+            connInfo.setOwner(ShiroUtils.getCurrUser().getLoginName());
+            connInfo.setRemark("未命名");
+            connInfo.setSessionTimeout(form.getSessionTimeout());
+            try{
+                coreService.saveConnection(connInfo);
+            }catch (Exception e) { /**ignore ex**/ }
             return  Result.successWrapper("object",rootInfo);
         } catch (Exception e) {
             zookeeperManager.close();
