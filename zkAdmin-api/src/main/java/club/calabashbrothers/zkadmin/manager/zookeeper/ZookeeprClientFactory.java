@@ -96,6 +96,7 @@ public class ZookeeprClientFactory {
     private static abstract class ConnectWatcher implements Watcher {
         public CountDownLatch connectLatch = new CountDownLatch(1);
         //connected status watcher
+        @Override
         public void process(WatchedEvent event) {
             switch (event.getState()) {
                 case SyncConnected:

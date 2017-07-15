@@ -96,9 +96,10 @@ public class ZookeeperManager {
         if(children==null){
             return;
         }
+        String parentPath ="/".equals(node.getPath())?"/":node.getPath()+"/";
         node.setChildren(new LinkedList<ZkNode>());
         for (String child:children){
-            ZkNode  childNode = new TextNode(child);
+            ZkNode  childNode = new TextNode(parentPath+child);
             loadZkNodes(zooKeeper,childNode);
             node.getChildren().add(childNode);
         }

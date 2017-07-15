@@ -1,6 +1,8 @@
 package club.calabashbrothers.zkadmin.manager.zookeeper.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 /**
@@ -43,6 +45,9 @@ public abstract class ZkNode<T> {
     abstract public T parse(byte[] data);
 
     public boolean isAcl() {
+        return acl;
+    }
+    public boolean getAcl() {
         return acl;
     }
 
